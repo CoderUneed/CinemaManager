@@ -1,0 +1,119 @@
+package cinema;
+import java.util.Scanner;
+public class Cinema {
+
+    public static void main(String[] args) {
+        // Write your code here
+        int choice;
+        int[] count8 = new int[1];
+        count8[0] = 0;
+        int[] count10 = new int[1];
+        count10[0] = 0;
+        System.out.println("Enter the number of rows:");
+        Scanner scanner = new Scanner(System.in);
+        int rows = scanner.nextInt();
+        System.out.println("Enter the number of seats in each row:");
+        int seats = scanner.nextInt();
+        char[][] arr = new char[rows + 1][seats];
+        System.out.println();
+        for (int i = 1; i <= rows; i++) {
+            for (int j = 0; j < seats; j++) {
+                arr[i][j] = 'S';
+            }
+        }
+        boolean flag = true;
+        // Loop Content Starts here
+        while(flag) {
+
+            System.out.println(""" 
+                          1. Show the seats
+                          2. Buy a ticket
+                          3. Statistics
+                          0. Exit 
+                           """);
+            choice = scanner.nextInt();
+            switch (choice) {
+                case 1:
+                    cinemaHall(arr, rows, seats);
+                    break;
+                case 2:
+                    buyTicket(arr, rows, seats, count8, count10);
+                    break;
+                case 3:
+                    statistics(count8, count10, rows, seats);
+                    break;
+                case 0:
+                    flag = false;
+                    break;
+                default:
+                    System.out.println("Invalid Input");
+                    break;
+            }
+
+        }
+    }
+
+
+
+    public static void cinemaHall(char[][] arr, int rows, int seats) {
+
+        System.out.println("\nCinema:");
+        System.out.print(" ");
+        for (int i = 1; i <= seats; i++) {
+            System.out.print(" " + i);
+        }
+
+        System.out.println();
+        for (int i = 1; i <= rows; i++) {
+            System.out.print(i);
+            for (int j = 0; j < seats; j++) {
+                System.out.print(" " + arr[i][j]);
+            }
+            System.out.println();
+        }
+
+    }
+
+    public static void buyTicket(char[][] arr, int rows, int seats, int[] count8, int[] count10) {
+        System.out.println("Enter a row number:");
+        Scanner scanner = new Scanner(System.in);
+        int rowNo = scanner.nextInt();
+        System.out.println("Enter a seat number in that row:");
+        int seatNo = scanner.nextInt();
+        int price = 0;
+        if (rowNo > rows || seatNo > seats || rowNo < 0 || seatNo < 0) {
+            System.out.println("Wrong input!");
+        }
+        else if (arr[rowNo][seatNo-1] == 'B') {
+            System.out.println("\nThat ticket has already been purchased!\n");
+            buyTicket(arr, rows, seats, count8, count10);
+        }  else {
+            if(rowNo > seats / 2) {
+                price = 8;
+                count8[0]++;
+            } else if (rowNo <= seats / 2) {
+                price = 10;
+                count10[0]++;
+            }
+            System.out.printf("\nTicket price: $%d\n", price);
+            arr[rowNo][seatNo-1] = 'B';
+        }
+    }
+
+    public static void statistics(int[] count8, int[] count10, int seats, int rows) {
+        System.out.printf("Number of purchased tickets: %d\n", count8[0] + count10[0]);
+        System.out.print("Percentage: ");
+        double a = ((count8[0] + count10[0])* 100.0 /(seats*rows));
+        System.out.printf("%.2f", a);
+        System.out.println("%");
+        int current = count8[0] * 8 + count10[0] * 10;
+        System.out.printf("Current income: $%d\n", current);
+        int total = 0;
+        if (rows % 2 == 0) {
+            total = 9 * rows * seats;
+        } else {
+            total = (rows/2 * seats * 10) + ((rows/2 + 1) * seats * 8);
+        }
+        System.out.printf("Total income: $%d\n", total);
+    }
+}
